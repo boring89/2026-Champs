@@ -1,12 +1,10 @@
 package frc.robot.utilities.TargetCalculator;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
-import java.util.Queue;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -16,13 +14,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.RobotState.FieldState;
 import frc.robot.utilities.RobotState.RobotState;
+import frc.robot.utilities.RobotState.RobotState.AllianceState;
+import frc.robot.utilities.RobotState.RobotState.LocationState;
 
 public class TargetCalculator extends SubsystemBase {
 
@@ -37,16 +37,9 @@ public class TargetCalculator extends SubsystemBase {
 
     private final TargetMaps maps = new TargetMaps();
 
-    private Pose2d predictedRobotPose = new Pose2d();
-
     private Rotation2d predictedTargetAngle = new Rotation2d();
     private double predictedTargetHoodPosition = 0;
     private AngularVelocity predictedTargetFlywheelVelocity = RotationsPerSecond.of(0);
-
-    public enum Target {
-        HUB,
-        ALLIANCE
-    }
 
     private RobotState robotState;
 
@@ -78,42 +71,7 @@ public class TargetCalculator extends SubsystemBase {
         Pose2d robotPose = robotState.getPose();
         ChassisSpeeds robotVelocity = robotState.getVelocity();
 
-        Target target = Target.HUB;
-
-        if (target == Target.HUB) {
-            if (nowAlliance.isPresent()) {
-                if (nowAlliance.get() == Alliance.Blue) {
-                    targetTranslation = kBlueHub;
-                } else {
-                    targetTranslation = kRedHub;
-                }
-            } else {
-                targetTranslation = kBlueHub;
-            }
-        } else {
-
-            if (nowAlliance.isPresent()) {
-                if (nowAlliance.get() == Alliance.Blue) {
-                    if (robotPose.getY() > Units.inchesToMeters(158.845)) {
-                        targetTranslation = kLeftBlueAlliance;
-                    } else {
-                        targetTranslation = kRightBlueAlliance;
-                    }
-                } else {
-                    if (robotPose.getY() > Units.inchesToMeters(158.845)) {
-                        targetTranslation = kRightRedAlliance;
-                    } else {
-                        targetTranslation = kLeftRedAlliance;
-                    }
-                }
-            } else {
-                if (robotPose.getY() > Units.inchesToMeters(158.845)) {
-                    targetTranslation = kLeftBlueAlliance;
-                } else {
-                    targetTranslation = kRightBlueAlliance;
-                }
-            }
-        }
+        targetTranslation = this.selectTranslation(nowAlliance);
 
         Translation2d predictedRobotTranslation = robotPose.getTranslation();
         Logger.recordOutput("TargetCalculator/PredictedRobotTranslationWithoutL",
@@ -160,4 +118,38 @@ public class TargetCalculator extends SubsystemBase {
     public AngularVelocity getTargetFlywheelVelocity() {
         return predictedTargetFlywheelVelocity;
     }
+
+    private Translation2d selectTranslation(Optional<Alliance> nowAlliance) {
+
+        FieldState state = robotState.getFieldState();
+        
+        AllianceState allianceState = state.allianceState;
+        LocationState locationState = state.locationState;
+
+        Alliance alliance = nowAlliance.isPresent() ? nowAlliance.get() : Alliance.Blue;
+
+        boolean isBlue = alliance == Alliance.Blue;
+
+        if (allianceState == AllianceState.NULL || locationState == LocationState.NULL) {
+            return robotState.getPose().getTranslation();
+        }
+
+        if (locationState == LocationState.TOP) {
+            if (allianceState.equals(AllianceState.BLUE)) {
+                return isBlue ? kBlueHub : kLeftRedAlliance;
+            } else if (allianceState.equals(AllianceState.RED)) {
+                return !isBlue ? kRedHub : kLeftBlueAlliance;
+            } else {
+                return isBlue ? kLeftBlueAlliance : kLeftRedAlliance;
+            }
+        } else {
+            if (allianceState.equals(AllianceState.BLUE)) {
+                return isBlue ? kBlueHub : kRightRedAlliance;
+            } else if (allianceState.equals(AllianceState.RED)) {
+                return !isBlue ? kRedHub : kRightBlueAlliance;
+            } else {
+                return isBlue ? kRightBlueAlliance : kRightRedAlliance;
+            }
+        }
+    } 
 }

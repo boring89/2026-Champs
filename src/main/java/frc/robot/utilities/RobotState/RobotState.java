@@ -1,24 +1,30 @@
 package frc.robot.utilities.RobotState;
 
 
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Drivetrain.CommandSwerveDrivetrain;
 
 public class RobotState extends SubsystemBase {
 
-    public enum FieldState {
-        BLUE_BOTTOM_ALLIANCE,
-        BLUE_TOP_ALLIANCE,
-        RED_BOTTOM_ALLIANCE,
-        RED_TOP_ALLIANCE,
+    public enum AllianceState {
+        BLUE,
+        RED,
         MIDDLE,
         NULL
     }
+
+    public enum LocationState {
+        TOP,
+        BOTTOM,
+        NULL
+    }
+
+
 
     private final double kFieldLength = Units.inchesToMeters(651.22);
     private final double kFieldWidth = Units.inchesToMeters(317.69);
@@ -48,27 +54,29 @@ public class RobotState extends SubsystemBase {
     }
 
     private FieldState calculateFieldState() {
-        
+
         if (pose == null) {
-            return FieldState.NULL;
+            return new FieldState(AllianceState.NULL, LocationState.NULL);
         }
 
-        if (pose.getY() > kBlueAllianceYaxis) {
-            if (pose.getX() < kFieldWidth / 2) {
-                return FieldState.BLUE_BOTTOM_ALLIANCE;
-            } else {
-                return FieldState.BLUE_TOP_ALLIANCE;
-            }
-        } else if (pose.getY() < kRedAllianceYaxis) {
-            if (pose.getX() < kFieldWidth / 2) {
-                return FieldState.RED_BOTTOM_ALLIANCE;
-            } else {
-                return FieldState.RED_TOP_ALLIANCE;
-            }
+        AllianceState alliance;
+        LocationState location;
+
+        if (pose.getY() < kBlueAllianceYaxis) {
+            alliance = AllianceState.BLUE;
+        } else if (pose.getY() > kRedAllianceYaxis) {
+            alliance = AllianceState.RED;
         } else {
-            return FieldState.MIDDLE;
+            alliance = AllianceState.MIDDLE;
+        }
+
+        if (pose.getX() > kFieldWidth / 2) {
+            location = LocationState.TOP;
+        } else {
+            location = LocationState.BOTTOM;
         }
         
+        return new FieldState(alliance, location);
     }
 
     public Pose2d getPose() {

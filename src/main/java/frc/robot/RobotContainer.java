@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PhotonVisionConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Drivetrain.TunerConstants;
@@ -35,6 +36,7 @@ import frc.robot.subsystems.Mechanism.Roller.RollerIO;
 import frc.robot.subsystems.Mechanism.Roller.RollerIOHardware;
 import frc.robot.subsystems.Mechanism.Shooter.ShooterIO;
 import frc.robot.subsystems.Mechanism.Shooter.ShooterIOHardware;
+import frc.robot.subsystems.Vision.PhotonVision;
 import frc.robot.utilities.RobotState.RobotState;
 import frc.robot.utilities.TargetCalculator.TargetCalculator;
 
@@ -74,6 +76,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  public final PhotonVision photonvision = new PhotonVision(drivetrain, PhotonVisionConstants.cameraTransforms);
+
   public RobotContainer() {
     configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -98,10 +102,14 @@ public class RobotContainer {
 
     driverJoystick.start().and(driverJoystick.back()).onTrue(Commands.runOnce(this::toggleMode));
 
-    normalControls();
+    
 
-    mechanismTest();
-    sysidTest();
+    if (isTest) {
+      mechanismTest();
+      sysidTest();
+    } else {
+      normalControls();
+    }
   }
 
   public Command getAutonomousCommand() {

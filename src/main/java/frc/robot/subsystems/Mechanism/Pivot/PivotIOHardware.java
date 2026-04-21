@@ -1,12 +1,10 @@
 package frc.robot.subsystems.Mechanism.Pivot;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -28,7 +26,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +35,6 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
 
     private static final double kPivotReduction = 50.0;
     private static final AngularVelocity kMaxPivotSpeed = RPM.of(6000).div(kPivotReduction);
-    private static final Angle kPositionTolerance = Degrees.of(5);
 
     private final TalonFX motor;
     private final StatusSignal<Angle> angle;
@@ -131,7 +127,7 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
                     .withKP(300)
                     .withKI(0)
                     .withKD(0)
-                    .withKV(12.0 / kMaxPivotSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
+                    .withKV(12.0 / kMaxPivotSpeed.in(RotationsPerSecond))
                     .withGravityType(GravityTypeValue.Arm_Cosine)
             );
 

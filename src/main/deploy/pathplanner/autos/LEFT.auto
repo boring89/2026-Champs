@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LEFT_TO_MIDDLE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LEFT_MIDDLE_INTAKE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BACK SHOOT"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_With_Shake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LEFT_SECOND_INTAKE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_With_Shake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

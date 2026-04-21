@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -42,8 +44,6 @@ import frc.robot.utilities.TargetCalculator.TargetCalculator;
 
 public class RobotContainer {
 
-  private boolean isTest = false;
-
   private final CommandXboxController driverJoystick = new CommandXboxController(0);
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -70,7 +70,7 @@ public class RobotContainer {
 
   private final TargetCalculator targetCalculator = new TargetCalculator(robotState);
   private final Superstructure superstructure = new Superstructure(
-      drivetrain, roller, hopper, feeder, pivot, shooter, hood, isTest);
+      drivetrain, roller, hopper, feeder, pivot, shooter, hood);
 
   private final Telemetry logger = new Telemetry(this.drivetrain.getState());
 
@@ -81,7 +81,8 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("chooser", autoChooser);
+    SmartDashboard.putData("Autonomous Chooser", autoChooser);
+    Logger.recordOutput("Is in test mode", this.superstructure.isTest());
 
   }
 
@@ -90,9 +91,9 @@ public class RobotContainer {
         drivetrain.applyRequest(() -> {
           return normalDrive
               .withVelocityX(DrivetrainConstants.MaxDrivetrainSpeed.times(-driverJoystick.getLeftY())
-                  .times(0.3))
+                  .times(0.75))
               .withVelocityY(DrivetrainConstants.MaxDrivetrainSpeed.times(-driverJoystick.getLeftX())
-                  .times(0.3))
+                  .times(0.75))
               .withRotationalRate(DrivetrainConstants.MaxRotationSpeed.times(-driverJoystick.getRightX()));
         }));
     final var idle = new SwerveRequest.Idle();
@@ -100,11 +101,11 @@ public class RobotContainer {
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    driverJoystick.start().and(driverJoystick.back()).onTrue(Commands.runOnce(this::toggleMode));
+    driverJoystick.start().and(driverJoystick.back()).onTrue(Commands.runOnce(superstructure::toggleMode));
 
     
 
-    if (isTest) {
+    if (this.superstructure.isTest()) {
       mechanismTest();
       sysidTest();
     } else {
@@ -117,16 +118,16 @@ public class RobotContainer {
   }
 
   public void normalControls() {
-    driverJoystick.a().and(() -> !isTest).onTrue(superstructure.pivotShake())
+    driverJoystick.a().onTrue(superstructure.pivotShake())
         .onFalse(superstructure.stopShake());
 
-    driverJoystick.leftTrigger().and(() -> !isTest).onTrue(superstructure.intake())
+    driverJoystick.leftTrigger().onTrue(superstructure.intake())
         .onFalse(superstructure.stopIntake());
-    driverJoystick.leftBumper().and(() -> !isTest).onTrue(superstructure.pivotBack());
+    driverJoystick.leftBumper().onTrue(superstructure.pivotBack());
 
-    driverJoystick.rightTrigger().and(() -> !isTest).onTrue(superstructure.shoot())
+    driverJoystick.rightTrigger().onTrue(superstructure.shoot())
         .onFalse(superstructure.stopShoot());
-    driverJoystick.rightBumper().and(() -> !isTest).onTrue(aim(() -> superstructure.calculateDrivetrainOutput()));
+    driverJoystick.rightBumper().onTrue(aim(() -> superstructure.calculateDrivetrainOutput()));
   }
 
   public void sysidTest() {
@@ -137,12 +138,12 @@ public class RobotContainer {
   }
 
   public void mechanismTest() {
-    driverJoystick.a().and(() -> isTest).whileTrue(superstructure.intake());
-    driverJoystick.b().and(() -> isTest).whileTrue(superstructure.hopperTest());
-    driverJoystick.x().and(() -> isTest).whileTrue(superstructure.feederTest());
-    driverJoystick.y().and(() -> isTest).whileTrue(superstructure.pivotTest());
-    driverJoystick.povUp().and(() -> isTest).whileTrue(superstructure.shooterTest());
-    driverJoystick.povDown().and(() -> isTest).whileTrue(superstructure.hoodTest());
+    driverJoystick.a().whileTrue(superstructure.intake());
+    driverJoystick.b().whileTrue(superstructure.hopperTest());
+    driverJoystick.x().whileTrue(superstructure.feederTest());
+    driverJoystick.y().whileTrue(superstructure.pivotTest());
+    driverJoystick.povUp().whileTrue(superstructure.shooterTest());
+    driverJoystick.povDown().whileTrue(superstructure.hoodTest());
   }
 
   public Command aim(DoubleSupplier output) {
@@ -154,9 +155,5 @@ public class RobotContainer {
               .times(0.5))
           .withRotationalRate(DrivetrainConstants.MaxRotationSpeed.times(output.getAsDouble()));
     });
-  }
-
-  private void toggleMode() {
-    isTest = !isTest;
   }
 }

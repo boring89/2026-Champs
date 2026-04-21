@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -36,7 +37,7 @@ public class Superstructure extends SubsystemBase {
 
     private final PIDController drivetrainPID;
 
-    private final boolean isTest;
+    private boolean isTest = false;
 
     private AngularVelocity targetShooterAngularVelocity;
     private double targetHoodPosition;
@@ -51,8 +52,8 @@ public class Superstructure extends SubsystemBase {
             FeederIO feeder,
             PivotIO pivot,
             ShooterIO shooter,
-            HoodIO hood,
-            boolean isTest) {
+            HoodIO hood
+            ) {
         this.drivetrain = drivetrain;
         this.roller = roller;
         this.hopper = hopper;
@@ -64,7 +65,7 @@ public class Superstructure extends SubsystemBase {
         this.robotState = new RobotState(drivetrain.getState());
         this.targetCalculator = new TargetCalculator(robotState);
 
-        this.drivetrainPID = new PIDController(0.5, 0, 0);
+        this.drivetrainPID = new PIDController(0.5, 0, 0.03);
         this.drivetrainPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.isTest = isTest;
@@ -185,5 +186,13 @@ public class Superstructure extends SubsystemBase {
         Logger.recordOutput("Shooter/actual", shooter.getVelocity()[1]);
         Logger.recordOutput("Hood/target", targetHoodPosition);
         Logger.recordOutput("Hood/manual", manualHoodPosition);
+    }
+
+    public void toggleMode() {
+        this.isTest = !this.isTest;
+    }
+
+    public boolean isTest() {
+        return this.isTest;
     }
 }

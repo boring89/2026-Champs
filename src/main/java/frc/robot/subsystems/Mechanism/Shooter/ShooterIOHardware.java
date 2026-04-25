@@ -6,8 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -17,13 +17,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.subsystems.Mechanism.DeviceIDs;
 
 public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
 
     private final TalonFX leftMotor, middleMotor, rightMotor;
     private final StatusSignal<AngularVelocity> leftVelocity, middleVelocity, rightVelocity;
-    private final VelocityTorqueCurrentFOC out;
-    private final TorqueCurrentFOC currentSysID;
+    private final VelocityVoltage out;
+    private final VoltageOut voltageSysID;
 
     private final double gearRatio = 1;
 
@@ -34,16 +36,16 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
     public boolean isShooting = false;
 
     public ShooterIOHardware() {
-        this.leftMotor = new TalonFX(18, "canivore");
-        this.middleMotor = new TalonFX(19, "canivore");
-        this.rightMotor = new TalonFX(20, "canivore");
+        this.leftMotor = new TalonFX(DeviceIDs.Shooter.LEFT_MOTOR_ID, "rio");
+        this.middleMotor = new TalonFX(DeviceIDs.Shooter.MIDDLE_MOTOR_ID, "rio");
+        this.rightMotor = new TalonFX(DeviceIDs.Shooter.RIGHT_MOTOR_ID, "rio");
 
         this.leftVelocity = leftMotor.getVelocity();
         this.middleVelocity = middleMotor.getVelocity();
         this.rightVelocity = rightMotor.getVelocity();
 
-        this.out = new VelocityTorqueCurrentFOC(0);
-        this.currentSysID = new TorqueCurrentFOC(0);
+        this.out = new VelocityVoltage(0);
+        this.voltageSysID = new VoltageOut(0);
 
         this.sysIdRoutine = new SysIdRoutine(
                 new SysIdRoutine.Config(
@@ -52,7 +54,7 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
                         Seconds.of(10)),
                 new SysIdRoutine.Mechanism(
                         (voltage) -> {
-                            leftMotor.setControl(currentSysID.withOutput(voltage.in(Volts)));
+                            leftMotor.setControl(voltageSysID.withOutput(voltage.in(Volts)));
                         },
                         (log) -> {
                             log.motor("shooter_motor")
@@ -125,9 +127,20 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
 
         config.Slot0.kV = 0.0;
         config.Slot0.kS = 0.0;
+        config.Slot0.kA = 0.0;
 
         config.Feedback.SensorToMechanismRatio = gearRatio;
 
         motor.getConfigurator().apply(config);
+    }
+
+    @Override
+    public Command sysIdDynamic(Direction direction) {
+        return sysIdDynamic(direction);
+    }
+
+    @Override
+    public Command sysIdQuasistatic(Direction direction) {
+        return sysIdQuasistatic(direction);
     }
 }

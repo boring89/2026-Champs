@@ -151,7 +151,7 @@ public class PhotonVision extends SubsystemBase {
      */
     public boolean resetPoseToVision() {
         Pose2d bestPose = null;
-        double minScore = 99999.0; // 分數越低越好
+        double minScore = Double.MAX_VALUE; // 分數越低越好
 
         for (CamWrapper cw : cams) {
             PhotonPipelineResult result = cw.cam.getLatestResult();

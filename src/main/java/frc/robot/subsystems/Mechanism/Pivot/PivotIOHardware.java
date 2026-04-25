@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.subsystems.Mechanism.DeviceIDs;
 
 public class PivotIOHardware extends SubsystemBase implements PivotIO {
 
@@ -47,7 +49,7 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
     private Angle targetPositionRotations = Rotation.of(0);
 
     public PivotIOHardware() {
-        this.motor = new TalonFX(14, "canivore");
+        this.motor = new TalonFX(DeviceIDs.Pivot.MOTOR_ID, "rio");
         this.angle = motor.getPosition();
         this.out = new MotionMagicVoltage(0);
         this.voltageSysId = new VoltageOut(0);
@@ -137,5 +139,15 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
     @Override
     public Command setAngleCommand(Angle angleDegrees) {
         return Commands.runOnce(() -> setAngle(angleDegrees));
+    }
+
+    @Override
+    public Command sysIdDynamic(Direction direction) {
+        return sysIdDynamic(direction);
+    }
+
+    @Override
+    public Command sysIdQuasistatic(Direction direction) {
+        return sysIdQuasistatic(direction);
     }
 }

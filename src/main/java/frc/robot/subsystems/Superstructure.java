@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Mechanism.Feeder.FeederIO;
-import frc.robot.subsystems.Mechanism.Hood.HoodIO;
 import frc.robot.subsystems.Mechanism.Hopper.HopperIO;
 import frc.robot.subsystems.Mechanism.Pivot.PivotIO;
 import frc.robot.subsystems.Mechanism.Pivot.Positions;
@@ -30,7 +29,7 @@ public class Superstructure extends SubsystemBase {
     private final FeederIO feeder;
     private final PivotIO pivot;
     private final ShooterIO shooter;
-    private final HoodIO hood;
+    // private final HoodIO hood;
     
     private final RobotState robotState;
     private final TargetCalculator targetCalculator;
@@ -51,8 +50,7 @@ public class Superstructure extends SubsystemBase {
             HopperIO hopper,
             FeederIO feeder,
             PivotIO pivot,
-            ShooterIO shooter,
-            HoodIO hood
+            ShooterIO shooter
             ) {
         this.drivetrain = drivetrain;
         this.roller = roller;
@@ -60,15 +58,12 @@ public class Superstructure extends SubsystemBase {
         this.feeder = feeder;
         this.pivot = pivot;
         this.shooter = shooter;
-        this.hood = hood;
 
         this.robotState = new RobotState(drivetrain.getState());
         this.targetCalculator = new TargetCalculator(robotState);
 
         this.drivetrainPID = new PIDController(0.5, 0, 0.03);
         this.drivetrainPID.enableContinuousInput(-Math.PI, Math.PI);
-
-        this.isTest = isTest;
 
         this.targetShooterAngularVelocity = targetCalculator.getTargetFlywheelVelocity();
         this.targetHoodPosition = targetCalculator.getTargetHoodPosition();
@@ -159,23 +154,26 @@ public class Superstructure extends SubsystemBase {
                 () -> shooter.disable());
     }
 
-    public Command hoodTest() {
-        return Commands.startEnd(
-                () -> hood.setPosition(0.5),
-                () -> hood.setPosition(0));
+    public Command shooterSpeedUp() {
+        return Commands.runOnce(
+            () -> this.manualShooterAngularVelocity.plus(RotationsPerSecond.of(1))
+        );
+    }
+
+    public Command shooterSlowDown() {
+        return Commands.runOnce(
+            () -> this.manualShooterAngularVelocity.minus(RotationsPerSecond.of(1))
+        );
     }
 
     @Override
     public void periodic() {
         targetShooterAngularVelocity = targetCalculator.getTargetFlywheelVelocity();
-        targetHoodPosition = targetCalculator.getTargetHoodPosition();
 
         if (isTest) {
             shooter.setVelocity(manualShooterAngularVelocity);
-            hood.setPosition(manualHoodPosition);
         } else {
             shooter.setVelocity(targetShooterAngularVelocity);
-            hood.setPosition(targetHoodPosition);
         }
         dashboard();
     }

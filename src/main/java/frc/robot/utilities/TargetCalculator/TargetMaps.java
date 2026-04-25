@@ -1,6 +1,5 @@
 package frc.robot.utilities.TargetCalculator;
 
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -8,7 +7,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
@@ -40,15 +38,7 @@ public class TargetMaps {
         rollMap.put(4.5, RotationsPerSecond.of(39));
         rollMap.put(5.0, RotationsPerSecond.of(40));
 
-        hoodMap.put(1.0, 0.01);
-        hoodMap.put(1.5, 0.12);
-        hoodMap.put(2.0, 0.24);
-        hoodMap.put(2.5, 0.35);
-        hoodMap.put(3.0, 0.46);
-        hoodMap.put(3.5, 0.57);
-        hoodMap.put(4.0, 0.65);
-        hoodMap.put(4.5, 0.73);
-        hoodMap.put(5.0, 0.77);
+        hoodMap.put(0.0, 0.0);
 
         timeOfFlightMap.put(1.0, 0.84);
         timeOfFlightMap.put(1.0, 0.98);

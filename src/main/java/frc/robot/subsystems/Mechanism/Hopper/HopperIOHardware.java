@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Mechanism.DeviceIDs;
 
 public class HopperIOHardware implements HopperIO {
 
@@ -18,7 +19,7 @@ public class HopperIOHardware implements HopperIO {
     private final StatusSignal<Voltage> voltage;
 
     public HopperIOHardware() {
-        this.motor = new TalonFX(13, "canivore");
+        this.motor = new TalonFX(DeviceIDs.Hopper.MOTOR_ID, "rio");
         this.output = new VoltageOut(0);
         this.voltage = motor.getMotorVoltage();
     }

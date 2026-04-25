@@ -3,7 +3,6 @@ package frc.robot.utilities.TargetCalculator;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
@@ -56,12 +55,14 @@ public class TargetCalculator extends SubsystemBase {
 
         if (robotState.getPose() == null || robotState.getVelocity() == null) {
             Logger.recordOutput("TargetCalculator/isPresent", false);
+            Logger.recordOutput("TargetCalculator/ErrorMessage", "Robot pose or velocity is not available.");
             predictedTargetAngle = new Rotation2d();
             predictedTargetHoodPosition = 0.01;
             predictedTargetFlywheelVelocity = RotationsPerSecond.of(0);
             return;
         }
 
+        Logger.recordOutput("TargetCalculator/ErrorMessage", "NONE");
         Logger.recordOutput("TargetCalculator/isPresent", true);
 
         Optional<Alliance> nowAlliance = DriverStation.getAlliance();

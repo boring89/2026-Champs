@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Mechanism.DeviceIDs;
 
 public class HoodIOHardware extends SubsystemBase implements HoodIO {
 
@@ -16,8 +17,8 @@ public class HoodIOHardware extends SubsystemBase implements HoodIO {
     private double currentPosition = 0.5;
 
     public HoodIOHardware() {
-        leftServo = new Servo(3);
-        rightServo = new Servo(4);
+        leftServo = new Servo(DeviceIDs.Hood.LEFT_SERVO_PWM_CHANNEL);
+        rightServo = new Servo(DeviceIDs.Hood.RIGHT_SERVO_PWM_CHANNEL);
         leftServo.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
         rightServo.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
         setPosition(currentPosition);

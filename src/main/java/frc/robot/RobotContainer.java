@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -28,8 +29,6 @@ import frc.robot.subsystems.Drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Drivetrain.TunerConstants;
 import frc.robot.subsystems.Mechanism.Feeder.FeederIO;
 import frc.robot.subsystems.Mechanism.Feeder.FeederIOHardware;
-import frc.robot.subsystems.Mechanism.Hood.HoodIO;
-import frc.robot.subsystems.Mechanism.Hood.HoodIOHardware;
 import frc.robot.subsystems.Mechanism.Hopper.HopperIO;
 import frc.robot.subsystems.Mechanism.Hopper.HopperIOHardware;
 import frc.robot.subsystems.Mechanism.Pivot.PivotIO;
@@ -39,8 +38,6 @@ import frc.robot.subsystems.Mechanism.Roller.RollerIOHardware;
 import frc.robot.subsystems.Mechanism.Shooter.ShooterIO;
 import frc.robot.subsystems.Mechanism.Shooter.ShooterIOHardware;
 import frc.robot.subsystems.Vision.PhotonVision;
-import frc.robot.utilities.RobotState.RobotState;
-import frc.robot.utilities.TargetCalculator.TargetCalculator;
 
 public class RobotContainer {
 
@@ -64,13 +61,9 @@ public class RobotContainer {
   private final HopperIO hopper = new HopperIOHardware();
   private final FeederIO feeder = new FeederIOHardware();
   private final ShooterIO shooter = new ShooterIOHardware();
-  private final HoodIO hood = new HoodIOHardware();
 
-  private final RobotState robotState = new RobotState(drivetrain.getState());
-
-  private final TargetCalculator targetCalculator = new TargetCalculator(robotState);
   private final Superstructure superstructure = new Superstructure(
-      drivetrain, roller, hopper, feeder, pivot, shooter, hood);
+      drivetrain, roller, hopper, feeder, pivot, shooter);
 
   private final Telemetry logger = new Telemetry(this.drivetrain.getState());
 
@@ -135,6 +128,16 @@ public class RobotContainer {
     driverJoystick.povUp().and(driverJoystick.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     driverJoystick.povUp().and(driverJoystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     driverJoystick.povUp().and(driverJoystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    driverJoystick.povDown().and(driverJoystick.a()).whileTrue(shooter.sysIdDynamic(Direction.kForward));
+    driverJoystick.povDown().and(driverJoystick.b()).whileTrue(shooter.sysIdDynamic(Direction.kReverse));
+    driverJoystick.povDown().and(driverJoystick.x()).whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
+    driverJoystick.povDown().and(driverJoystick.y()).whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
+
+    driverJoystick.povLeft().and(driverJoystick.a()).whileTrue(pivot.sysIdDynamic(Direction.kForward));
+    driverJoystick.povLeft().and(driverJoystick.b()).whileTrue(pivot.sysIdDynamic(Direction.kReverse));
+    driverJoystick.povLeft().and(driverJoystick.x()).whileTrue(pivot.sysIdQuasistatic(Direction.kForward));
+    driverJoystick.povLeft().and(driverJoystick.y()).whileTrue(pivot.sysIdQuasistatic(Direction.kReverse));
   }
 
   public void mechanismTest() {
@@ -142,8 +145,10 @@ public class RobotContainer {
     driverJoystick.b().whileTrue(superstructure.hopperTest());
     driverJoystick.x().whileTrue(superstructure.feederTest());
     driverJoystick.y().whileTrue(superstructure.pivotTest());
-    driverJoystick.povUp().whileTrue(superstructure.shooterTest());
-    driverJoystick.povDown().whileTrue(superstructure.hoodTest());
+    driverJoystick.rightTrigger().whileTrue(superstructure.shooterTest());
+
+    driverJoystick.povUp().onTrue(superstructure.shooterSpeedUp());
+    driverJoystick.povDown().onTrue(superstructure.shooterSlowDown());
   }
 
   public Command aim(DoubleSupplier output) {

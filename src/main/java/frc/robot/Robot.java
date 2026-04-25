@@ -65,7 +65,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-
+    m_robotContainer.photonvision.resetPoseToVision();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

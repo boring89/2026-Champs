@@ -9,6 +9,10 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -41,6 +45,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    
   }
 
   /**
@@ -59,13 +65,24 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
   }
 
+  @Override
+  public void robotInit() {
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      m_robotContainer.drivetrain.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+    } else {
+      m_robotContainer.drivetrain.resetPose(new Pose2d(0.0, 0.00, new Rotation2d(Math.PI)));
+    }
+  }
+
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    
+  }
 
   @Override
   public void disabledPeriodic() {
-    m_robotContainer.photonvision.resetPoseToVision();
+    // m_robotContainer.photonvision.resetPoseToVision();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

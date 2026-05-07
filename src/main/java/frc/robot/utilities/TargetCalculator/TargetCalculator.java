@@ -38,7 +38,7 @@ public class TargetCalculator extends SubsystemBase {
 
     private Rotation2d predictedTargetAngle = new Rotation2d();
     private double predictedTargetHoodPosition = 0;
-    private AngularVelocity predictedTargetFlywheelVelocity = RotationsPerSecond.of(0);
+    private double[] predictedTargetFlywheelVelocity = new double[3];
 
     private RobotState robotState;
 
@@ -53,12 +53,14 @@ public class TargetCalculator extends SubsystemBase {
 
     public void calculate() {
 
-        if (robotState.getPose() == null || robotState.getVelocity() == null) {
+        if (robotState.getPose() == null || robotState.getVelocity() == null || !DriverStation.getAlliance().isPresent()) {
             Logger.recordOutput("TargetCalculator/isPresent", false);
             Logger.recordOutput("TargetCalculator/ErrorMessage", "Robot pose or velocity is not available.");
             predictedTargetAngle = new Rotation2d();
             predictedTargetHoodPosition = 0.01;
-            predictedTargetFlywheelVelocity = RotationsPerSecond.of(0);
+            predictedTargetFlywheelVelocity[0] = 0.0;
+            predictedTargetFlywheelVelocity[1] = 0.0;
+            predictedTargetFlywheelVelocity[2] = 0.0;
             return;
         }
 
@@ -75,9 +77,6 @@ public class TargetCalculator extends SubsystemBase {
         targetTranslation = this.selectTranslation(nowAlliance);
 
         Translation2d predictedRobotTranslation = robotPose.getTranslation();
-        Logger.recordOutput("TargetCalculator/PredictedRobotTranslationWithoutL",
-                new Pose2d(predictedRobotTranslation, robotPose.getRotation()));
-
         // 迭代
         for (int i = 0; i < 5; i++) {
             double distance = targetTranslation.getDistance(predictedRobotTranslation);
@@ -95,16 +94,16 @@ public class TargetCalculator extends SubsystemBase {
         Distance predictedDistance = Meters.of(targetTranslation.getDistance(predictedRobotTranslation));
 
         predictedTargetAngle = targetTranslation.minus(predictedRobotTranslation).getAngle();
-        predictedTargetFlywheelVelocity = maps.getFlyWheelVelocity(predictedDistance);
+        predictedTargetFlywheelVelocity[0] = maps.getLeftVelocity(predictedDistance);
+        predictedTargetFlywheelVelocity[1] = maps.getMiddleVelocity(predictedDistance);
+        predictedTargetFlywheelVelocity[2] = maps.getRightVelocity(predictedDistance);
         predictedTargetHoodPosition = maps.getHoodPosition(predictedDistance);
 
         Logger.recordOutput("TargetCalculator/TargetFieldAngle", predictedTargetAngle.getRadians());
         Logger.recordOutput("TargetCalculator/TargetHoodPosition", predictedTargetHoodPosition);
-        Logger.recordOutput("TargetCalculator/TargetFlywheelVelocity",
-                predictedTargetFlywheelVelocity.in(RotationsPerSecond));
+        // Logger.recordOutput("TargetCalculator/TargetFlywheelVelocity",
+        //         predictedTargetFlywheelVelocity);
 
-        Logger.recordOutput("TargetCalculator/PredictedRobotTranslation",
-                new Pose2d(predictedRobotTranslation, robotPose.getRotation()));
         Logger.recordOutput("TargetCalculator/PredictedDistance", predictedDistance.in(Meters));
     }
 
@@ -116,7 +115,7 @@ public class TargetCalculator extends SubsystemBase {
         return predictedTargetHoodPosition;
     }
 
-    public AngularVelocity getTargetFlywheelVelocity() {
+    public double[] getTargetFlywheelVelocity() {
         return predictedTargetFlywheelVelocity;
     }
 

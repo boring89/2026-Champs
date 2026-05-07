@@ -24,6 +24,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,6 +76,7 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
                                     .angularVelocity(motor.getVelocity().getValue());
                         },
                         this));
+        configure();
     }
 
     @Override
@@ -95,7 +97,7 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
 
     @Override
     public boolean isAtSetpoint() {
-        return Math.abs(this.angle.getValue().in(Radian) - this.targetPositionRotations.in(Radian)) < 1;
+        return Math.abs(this.angle.getValue().in(Radian) - this.targetPositionRotations.in(Radian)) < Units.degreesToRadians(1);
     }
 
     @Override
@@ -109,9 +111,9 @@ public class PivotIOHardware extends SubsystemBase implements PivotIO {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
+                    .withStatorCurrentLimit(Amps.of(50))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
+                    .withSupplyCurrentLimit(Amps.of(30))
                     .withSupplyCurrentLimitEnable(true)
             )
             .withFeedback(

@@ -7,7 +7,7 @@ public class DeviceIDs {
     }
 
     public static final class Hood {
-        public static final int LEFT_SERVO_PWM_CHANNEL = 1;
+        public static final int LEFT_SERVO_PWM_CHANNEL = 0;
         public static final int RIGHT_SERVO_PWM_CHANNEL = 2;
     }
 

@@ -1,11 +1,18 @@
 package frc.robot.subsystems.Mechanism.Shooter;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,7 +36,7 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
 
     private final double gearRatio = 1;
 
-    private AngularVelocity targetVelocity = RotationsPerSecond.of(0);
+    private double[] targetVelocity = new double[3];
 
     public final SysIdRoutine sysIdRoutine;
 
@@ -65,31 +72,38 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
                         this));
 
         configure(leftMotor, InvertedValue.CounterClockwise_Positive);
-        configure(middleMotor, InvertedValue.Clockwise_Positive);
+        configure(middleMotor, InvertedValue.CounterClockwise_Positive);
         configure(rightMotor, InvertedValue.Clockwise_Positive);
     }
 
     @Override
     public void periodic() {
+
+        Logger.recordOutput("Shooter/isShooting", this.isShooting);
+
         if (isShooting) {
-            this.leftMotor.setControl(out.withVelocity(targetVelocity));
-            this.middleMotor.setControl(out.withVelocity(targetVelocity));
-            this.rightMotor.setControl(out.withVelocity(targetVelocity));
+            this.leftMotor.setControl(out.withVelocity(targetVelocity[0]));
+            this.middleMotor.setControl(out.withVelocity(targetVelocity[1]));
+            this.rightMotor.setControl(out.withVelocity(targetVelocity[2]));
+        } else {
+            this.leftMotor.stopMotor();
+            this.middleMotor.stopMotor();
+            this.rightMotor.stopMotor();
         }
     }
 
     @Override
     public Command enable() {
-        return Commands.run(() -> isShooting = true);
+        return Commands.runOnce(() -> isShooting = true);
     }
 
     @Override
     public Command disable() {
-        return Commands.run(() -> isShooting = false);
+        return Commands.runOnce(() -> isShooting = false);
     }
 
     @Override
-    public void setVelocity(AngularVelocity velocityRPS) {
+    public void setVelocity(double[] velocityRPS) {
         this.targetVelocity = velocityRPS;
     }
 
@@ -101,35 +115,39 @@ public class ShooterIOHardware extends SubsystemBase implements ShooterIO {
 
     @Override
     public boolean isAtSetpoint() {
-        return Math.abs(leftVelocity.getValue().in(RotationsPerSecond) - targetVelocity.in(RotationsPerSecond)) < 1d
+        return Math.abs(leftVelocity.getValue().in(RotationsPerSecond) - targetVelocity[0]) < 5d
                 && Math.abs(
-                        middleVelocity.getValue().in(RotationsPerSecond) - targetVelocity.in(RotationsPerSecond)) < 1d
+                        middleVelocity.getValue().in(RotationsPerSecond) - targetVelocity[1]) < 5d
                 && Math.abs(
-                        rightVelocity.getValue().in(RotationsPerSecond) - targetVelocity.in(RotationsPerSecond)) < 1d;
+                        rightVelocity.getValue().in(RotationsPerSecond) - targetVelocity[2]) < 5d;
     }
 
     @Override
     public void configure(TalonFX motor, InvertedValue invertDirection) {
-        TalonFXConfiguration config = new TalonFXConfiguration();
-
-        config.CurrentLimits
-                .withStatorCurrentLimitEnable(true)
-                .withStatorCurrentLimit(80.0)
-                .withSupplyCurrentLimitEnable(true)
-                .withSupplyCurrentLimit(40);
-        config.MotorOutput
-                .withInverted(invertDirection)
-                .withNeutralMode(NeutralModeValue.Coast);
-
-        config.Slot0.kP = 10.0;
-        config.Slot0.kI = 0.0;
-        config.Slot0.kD = 0.0;
-
-        config.Slot0.kV = 0.0;
-        config.Slot0.kS = 0.0;
-        config.Slot0.kA = 0.0;
-
-        config.Feedback.SensorToMechanismRatio = gearRatio;
+         final TalonFXConfiguration config = new TalonFXConfiguration()
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withInverted(invertDirection)
+                    .withNeutralMode(NeutralModeValue.Coast)
+            )
+            .withVoltage(
+                new VoltageConfigs()
+                    .withPeakReverseVoltage(Volts.of(0))
+            )
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(120))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(70))
+                    .withSupplyCurrentLimitEnable(true)
+            )
+            .withSlot0(
+                new Slot0Configs()
+                    .withKP(0.5)
+                    .withKI(2)
+                    .withKD(0)
+                    .withKV(12.0 / 100) // 12 volts when requesting max RPS
+            );
 
         motor.getConfigurator().apply(config);
     }

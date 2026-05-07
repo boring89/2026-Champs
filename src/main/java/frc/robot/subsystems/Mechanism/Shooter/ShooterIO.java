@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 public interface ShooterIO {
 
-    public void setVelocity(AngularVelocity velocityRPS);
+    public void setVelocity(double[] velocityRPS);
 
     public AngularVelocity[] getVelocity();
 

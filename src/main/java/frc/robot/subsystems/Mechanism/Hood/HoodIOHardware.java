@@ -14,7 +14,7 @@ public class HoodIOHardware extends SubsystemBase implements HoodIO {
     private final Servo leftServo;
     private final Servo rightServo;
 
-    private double currentPosition = 0.5;
+    private double currentPosition = 0.4;
 
     public HoodIOHardware() {
         leftServo = new Servo(DeviceIDs.Hood.LEFT_SERVO_PWM_CHANNEL);
@@ -23,6 +23,8 @@ public class HoodIOHardware extends SubsystemBase implements HoodIO {
         rightServo.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
         setPosition(currentPosition);
         SmartDashboard.putData(this);
+
+        
     }
 
     @Override

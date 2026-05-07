@@ -6,8 +6,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.Drivetrain.CommandSwerveDrivetrain;
 import frc.robot.utilities.VisionHelper.LimelightHelpers;
 
@@ -32,12 +30,12 @@ public class Limelight extends SubsystemBase {
     public void periodic() {
         LimelightHelpers.SetRobotOrientation(
                 this.limelightName,
-                this.gyro.getYaw().getValueAsDouble(),
-                this.gyro.getAngularVelocityZWorld().getValueAsDouble(),
-                this.gyro.getPitch().getValueAsDouble(),
-                this.gyro.getAngularVelocityYWorld().getValueAsDouble(),
-                this.gyro.getRoll().getValueAsDouble(),
-                this.gyro.getAngularVelocityXWorld().getValueAsDouble());
+                this.drive.getPose().getRotation().getDegrees(),
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0);
 
         // MegaTag2 result
 
@@ -55,13 +53,13 @@ public class Limelight extends SubsystemBase {
 
         // 機器人旋轉太快時 (大於 maxYawRate度/秒)，視覺會有殘影，不使用數據
         // (假設 drive.getGyroYawRate() 回傳 deg/s)
-        if (Math.abs(gyro.getAngularVelocityZWorld().getValueAsDouble()) > LimelightConstants.MAX_GYRO_RATE)
-            return;
+        // if (Math.abs(gyro.getAngularVelocityZWorld().getValueAsDouble()) > LimelightConstants.MAX_GYRO_RATE)
+        //     return;
 
-        // 檢查座標是否跑出場地外 (X: 0~16.54m, Y: 0~8.21m)
-        if (mt2.pose.getX() < 0 || mt2.pose.getX() > FieldConstants.fieldLength ||
-                mt2.pose.getY() < 0 || mt2.pose.getY() > FieldConstants.fieldWidth)
-            return;
+        // // 檢查座標是否跑出場地外 (X: 0~16.54m, Y: 0~8.21m)
+        // if (mt2.pose.getX() < 0 || mt2.pose.getX() > FieldConstants.fieldLength ||
+        //         mt2.pose.getY() < 0 || mt2.pose.getY() > FieldConstants.fieldWidth)
+        //     return;
 
         // ---------------------------------------------------------
         // 4. 計算標準差 (Trust Level)
@@ -75,12 +73,12 @@ public class Limelight extends SubsystemBase {
             if (mt2.tagCount >= 2) {
                 // 多 Tag：非常信任
                 xyStds = 0.5;
-                degStds = 6.0;
+                degStds = Double.MAX_VALUE;
             } else {
                 // 單 Tag：信任度隨距離遞減 (距離越遠，標準差越大)
                 // 這裡使用距離的平方來快速降低遠距離的權重
                 xyStds = 1.0 * (avgDist * avgDist);
-                degStds = 999.0; // 單 Tag 完全不信任 MT2 算出的角度，只用它的 X/Y
+                degStds = Double.MAX_VALUE; // 單 Tag 完全不信任 MT2 算出的角度，只用它的 X/Y
             }
 
         // ---------------------------------------------------------
@@ -92,8 +90,8 @@ public class Limelight extends SubsystemBase {
                 mt2.timestampSeconds, // 這是正確的拍攝時間 (Latency Compensated)
                 VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
 
-        Logger.recordOutput("Vision/Limelight/Pose/" + this.limelightName, mt2.pose);
-        Logger.recordOutput("Vision/Limelight/TagID/" + this.limelightName, tagId);
+        // Logger.recordOutput("Vision/Limelight/Pose/" + this.limelightName, mt2.pose);
+        // Logger.recordOutput("Vision/Limelight/TagID/" + this.limelightName, tagId);
     }
 
     // 提供給外部使用的 Getter

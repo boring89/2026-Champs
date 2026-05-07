@@ -12,33 +12,46 @@ import edu.wpi.first.units.measure.Distance;
 
 public class TargetMaps {
 
-    public final InterpolatingTreeMap<Double, AngularVelocity> rollMap;
+    public final InterpolatingDoubleTreeMap L_rollMap, M_rollMap, R_rollMap;
     public final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
     public final InterpolatingDoubleTreeMap hoodMap = new InterpolatingDoubleTreeMap();
 
     public TargetMaps() {
 
-        rollMap = new InterpolatingTreeMap<>(
-                InverseInterpolator.forDouble(),
-                (start, end, t) -> {
-                    double startVal = start.in(RotationsPerSecond);
-                    double endVal = end.in(RotationsPerSecond);
-                    double interpolated = MathUtil.interpolate(startVal, endVal, t);
+        L_rollMap = new InterpolatingDoubleTreeMap();
 
-                    return RotationsPerSecond.of(interpolated);
-                });
+        M_rollMap = new InterpolatingDoubleTreeMap();
 
-        rollMap.put(1.0, RotationsPerSecond.of(32));
-        rollMap.put(1.5, RotationsPerSecond.of(33));
-        rollMap.put(2.0, RotationsPerSecond.of(34));
-        rollMap.put(2.5, RotationsPerSecond.of(35));
-        rollMap.put(3.0, RotationsPerSecond.of(36));
-        rollMap.put(3.5, RotationsPerSecond.of(37));
-        rollMap.put(4.0, RotationsPerSecond.of(38));
-        rollMap.put(4.5, RotationsPerSecond.of(39));
-        rollMap.put(5.0, RotationsPerSecond.of(40));
+        R_rollMap = new InterpolatingDoubleTreeMap();
 
-        hoodMap.put(0.0, 0.0);
+        L_rollMap.put(1.52, 72.2);
+        L_rollMap.put(1.97, 72.4);
+        L_rollMap.put(2.26, 75d);
+        L_rollMap.put(3.25, 79.8);
+        L_rollMap.put(4.21, 91d);
+        L_rollMap.put(5.1, 91.2);
+
+        M_rollMap.put(1.52, 73.4);
+        M_rollMap.put(1.97, 75d);
+        M_rollMap.put(2.26, 77.8);
+        M_rollMap.put(3.25, 88.6);
+        M_rollMap.put(4.21, 89d);
+        M_rollMap.put(5.1, 93.8);
+
+        R_rollMap.put(1.52, 73.2);
+        R_rollMap.put(1.97, 71.8);
+        R_rollMap.put(2.26, 75.6);
+        R_rollMap.put(3.25, 84.6);
+        R_rollMap.put(4.21, 87d);
+        R_rollMap.put(5.1, 92.8);
+
+
+        hoodMap.put(1.52, 0.16);
+        hoodMap.put(1.97, 0.16);
+        hoodMap.put(2.26, 0.16);
+        hoodMap.put(3.25, 0.24);
+        hoodMap.put(4.21, 0.34);
+        hoodMap.put(5.1, 0.39);
 
         timeOfFlightMap.put(1.0, 0.84);
         timeOfFlightMap.put(1.0, 0.98);
@@ -53,8 +66,16 @@ public class TargetMaps {
 
     // getter
 
-    public AngularVelocity getFlyWheelVelocity(Distance distance) {
-        return this.rollMap.get(distance.in(Meter));
+    public double getLeftVelocity(Distance distance) {
+        return this.L_rollMap.get(distance.in(Meter));
+    }
+
+    public double getMiddleVelocity(Distance distance) {
+        return this.M_rollMap.get(distance.in(Meter));
+    }
+
+    public double getRightVelocity(Distance distance) {
+        return this.R_rollMap.get(distance.in(Meter));
     }
 
     public double getHoodPosition(Distance distance) {

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RobotState extends SubsystemBase {
@@ -29,8 +30,8 @@ public class RobotState extends SubsystemBase {
     private final double kFieldLength = Units.inchesToMeters(651.22);
     private final double kFieldWidth = Units.inchesToMeters(317.69);
     private final double kAllianceAreaLength =  Units.inchesToMeters(182.11);
-    private final double kBlueAllianceYaxis = Units.inchesToMeters(kAllianceAreaLength);
-    private final double kRedAllianceYaxis = Units.inchesToMeters(kFieldLength - kAllianceAreaLength);
+    private final double kBlueAllianceXaxis = kAllianceAreaLength;
+    private final double kRedAllianceYaxis = kFieldLength - kAllianceAreaLength;
 
 
     private final SwerveDrivetrain.SwerveDriveState state;
@@ -62,20 +63,22 @@ public class RobotState extends SubsystemBase {
         AllianceState alliance;
         LocationState location;
 
-        if (pose.getY() < kBlueAllianceYaxis) {
+        if (pose.getX() < kBlueAllianceXaxis) {
             alliance = AllianceState.BLUE;
-        } else if (pose.getY() > kRedAllianceYaxis) {
+        } else if (pose.getX() > kRedAllianceYaxis) {
             alliance = AllianceState.RED;
         } else {
             alliance = AllianceState.MIDDLE;
         }
 
-        if (pose.getX() > kFieldWidth / 2) {
+        if (pose.getY() > kFieldWidth / 2) {
             location = LocationState.TOP;
         } else {
             location = LocationState.BOTTOM;
         }
         
+        SmartDashboard.putString("ALL", alliance.name());
+        SmartDashboard.putString("LOC", location.name());
         return new FieldState(alliance, location);
     }
 

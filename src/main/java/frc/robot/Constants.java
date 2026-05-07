@@ -24,12 +24,12 @@ import edu.wpi.first.wpilibj.RobotState;
 public final class Constants {
 
     public static final class DrivetrainConstants {
-        public static final LinearVelocity MaxDrivetrainSpeed = MetersPerSecond.of(5.29);
+        public static final LinearVelocity MaxDrivetrainSpeed = MetersPerSecond.of(5);
 
         public static final LinearVelocity NormalTeleOperatedSpeed = MetersPerSecond.of(4.0);
         public static final LinearVelocity MaxTeleOperatedSpeed = MetersPerSecond.of(5.29);
 
-        public static final AngularVelocity MaxRotationSpeed = RotationsPerSecond.of(1.5);
+        public static final AngularVelocity MaxRotationSpeed = RotationsPerSecond.of(1.85);
     }
 
     public static final class PhotonVisionConstants {

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.436384456656074,
-        "y": 5.011879910399012
+        "x": 3.4498813760379603,
+        "y": 5.686536180308422
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.316231406691385,
-        "y": 5.9428408037605935
+        "x": 3.348346759524599,
+        "y": 5.458083293153357
       },
       "isLocked": false,
-      "linkedName": "left end intake"
+      "linkedName": "L4"
     },
     {
       "anchor": {
-        "x": 3.1729891088453392,
-        "y": 5.262426454360875
+        "x": 3.159383155397391,
+        "y": 5.0947805456702255
       },
       "prevControl": {
-        "x": 4.437189486228814,
-        "y": 5.847857631532486
+        "x": 3.271186554272381,
+        "y": 5.318387343420204
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "left end shoot"
+      "linkedName": "L5"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -38.87709369368959
+    "rotation": -41.63353933657023
   },
   "reversed": false,
-  "folder": "Left",
+  "folder": "FXXK LIN",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -120.16326878581056
+    "rotation": -90.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

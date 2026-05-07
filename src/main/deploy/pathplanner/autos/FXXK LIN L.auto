@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "L1"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -13,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LEFT_TO_MIDDLE"
+            "pathName": "L2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LEFT_MIDDLE_INTAKE"
+            "pathName": "L3"
           }
         },
         {
@@ -31,7 +37,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BACK SHOOT"
+            "pathName": "L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L5"
           }
         },
         {
@@ -43,7 +55,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 3.5
           }
         },
         {
@@ -61,7 +73,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LEFT_SECOND_INTAKE"
+            "pathName": "L6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Intake"
           }
         },
         {

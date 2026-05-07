@@ -22,6 +22,8 @@ public class HopperIOHardware implements HopperIO {
         this.motor = new TalonFX(DeviceIDs.Hopper.MOTOR_ID, "rio");
         this.output = new VoltageOut(0);
         this.voltage = motor.getMotorVoltage();
+
+        configure();
     }
 
 
@@ -44,8 +46,8 @@ public class HopperIOHardware implements HopperIO {
                 .withInverted(InvertedValue.Clockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Brake);
         config.CurrentLimits
-                .withStatorCurrentLimit(50)
-                .withSupplyCurrentLimit(30)
+                .withStatorCurrentLimit(40)
+                .withSupplyCurrentLimit(15)
                 .withStatorCurrentLimitEnable(true)
                 .withSupplyCurrentLimitEnable(true);
         
@@ -55,5 +57,10 @@ public class HopperIOHardware implements HopperIO {
     @Override
     public Command setVoltageCommand(Voltage voltage) {
         return Commands.runOnce(() -> setVoltage(voltage));
+    }
+
+    @Override
+    public Command stopMotor() {
+        return Commands.runOnce(() -> this.motor.stopMotor());
     }
 }

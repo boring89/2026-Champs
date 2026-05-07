@@ -12,4 +12,6 @@ public interface HopperIO {
     public void configure();
 
     public Command setVoltageCommand(Voltage voltage);
+
+    public Command stopMotor();
 }

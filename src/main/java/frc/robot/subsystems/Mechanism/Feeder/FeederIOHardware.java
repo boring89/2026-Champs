@@ -22,6 +22,8 @@ public class FeederIOHardware implements FeederIO {
         this.motor = new TalonFX(DeviceIDs.Feeder.MOTOR_ID, "rio");
         this.output = new VoltageOut(0);
         this.voltage = motor.getMotorVoltage();
+
+        configure();
     }
 
 
@@ -56,5 +58,10 @@ public class FeederIOHardware implements FeederIO {
     @Override
     public Command setVoltageCommand(Voltage voltage) {
         return Commands.runOnce(() -> setVoltage(voltage));
+    }
+    
+    @Override
+    public Command stopMotor() {
+        return Commands.runOnce(() -> this.motor.stopMotor());
     }
 }

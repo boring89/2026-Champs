@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "R1"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -13,19 +19,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RIGHT - 1"
+            "pathName": "R2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RIGHT - 2"
+            "pathName": "R3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RIGHT - 3"
+            "pathName": "R4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R5"
           }
         },
         {
@@ -37,7 +55,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 4.0
+            "waitTime": 3.0
           }
         },
         {
@@ -47,15 +65,21 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "RIGHT - 4"
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RIGHT - 5"
+            "pathName": "R6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Intake"
           }
         },
         {

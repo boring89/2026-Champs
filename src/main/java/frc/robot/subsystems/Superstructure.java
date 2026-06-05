@@ -201,22 +201,24 @@ public class Superstructure extends SubsystemBase {
     @Override
     public void periodic() {
         targetShooterAngularVelocity = targetCalculator.getTargetFlywheelVelocity();
-        // targetShooterAngularVelocity[0] = manualShooterAngularVelocity.in(RotationsPerSecond);
-        // targetShooterAngularVelocity[1] = manualShooterAngularVelocity.in(RotationsPerSecond); 
-        // targetShooterAngularVelocity[2] = manualShooterAngularVelocity.in(RotationsPerSecond);
+
+        targetShooterAngularVelocity[0] = manualShooterAngularVelocity.in(RotationsPerSecond);
+        targetShooterAngularVelocity[1] = manualShooterAngularVelocity.in(RotationsPerSecond); 
+        targetShooterAngularVelocity[2] = manualShooterAngularVelocity.in(RotationsPerSecond);
+
         hood.setPosition(targetCalculator.getTargetHoodPosition());
         shooter.setVelocity(
             targetShooterAngularVelocity
         );
 
-        // hood.setPosition(manualHoodPosition);
-        // shooter.setVelocity(manualShooterAngularVelocity);
+        hood.setPosition(manualHoodPosition);
+        shooter.setVelocity(manualShooterAngularVelocity);
 
         dashboard();
     }
 
     private void dashboard() {
-        // Logger.recordOutput("Shooter/target", targetShooterAngularVelocity);
+        Logger.recordOutput("Shooter/target", targetShooterAngularVelocity);
         Logger.recordOutput("Shooter/manual", manualShooterAngularVelocity);
         Logger.recordOutput("Shooter/actual", shooter.getVelocity()[1]);
         Logger.recordOutput("Hood/target", targetHoodPosition);

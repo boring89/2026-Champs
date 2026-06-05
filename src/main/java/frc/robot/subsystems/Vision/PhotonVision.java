@@ -84,7 +84,6 @@ public class PhotonVision extends SubsystemBase {
         for (CamWrapper cw : cams) {
             for (PhotonPipelineResult result : cw.cam.getAllUnreadResults()) {
 
-                // 基礎資訊更新
                 if (result.hasTargets()) {
                     m_lastTagId = result.getBestTarget().getFiducialId();
                 }
@@ -101,9 +100,6 @@ public class PhotonVision extends SubsystemBase {
                 if (rotSpeed > PhotonVisionConstants.maxYawRate)
                     continue;
 
-                // ---------------------------------------------------------
-                // 計算 Tag 數量與平均距離
-                // ---------------------------------------------------------
                 int numTags = est.targetsUsed.size();
                 double avgDist = 0.0;
                 for (var tgt : est.targetsUsed) {
@@ -112,9 +108,6 @@ public class PhotonVision extends SubsystemBase {
                 if (numTags > 0)
                     avgDist /= numTags;
 
-                // ---------------------------------------------------------
-                // 過濾 D：單 Tag 有效性檢查
-                // ---------------------------------------------------------
                 if (numTags < 2) {
                     // 如果只有一個 Tag，距離太遠則丟棄
                     if (avgDist > maxSingleTagDistanceMeters)

@@ -145,58 +145,59 @@ public class Superstructure extends SubsystemBase {
         return output;
     }
 
-    // test
-    public Command hopperTest() {
-        return Commands.startEnd(
-                () -> hopper.setVoltage(Volts.of(5)),
-                () -> hopper.setVoltage(Volts.of(0)));
-    }
+        /** Test Methods */
 
-    public Command feederTest() {
-        return Commands.startEnd(
-                () -> feeder.setVoltage(Volts.of(5)),
-                () -> feeder.setVoltage(Volts.of(0)));
-    }
+    // public Command hopperTest() {
+    //     return Commands.startEnd(
+    //             () -> hopper.setVoltage(Volts.of(5)),
+    //             () -> hopper.setVoltage(Volts.of(0)));
+    // }
 
-    public Command rollerTest() {
-        return Commands.startEnd(
-                () -> roller.setVoltage(Volts.of(5)),
-                () -> roller.setVoltage(Volts.of(0)));
-    }
+    // public Command feederTest() {
+    //     return Commands.startEnd(
+    //             () -> feeder.setVoltage(Volts.of(5)),
+    //             () -> feeder.setVoltage(Volts.of(0)));
+    // }
 
-    public Command pivotTest() {
-        return Commands.startEnd(
-                () -> pivot.setAngle(Positions.BACK),
-                () -> pivot.setAngle(Positions.INTAKE));
-    }
+    // public Command rollerTest() {
+    //     return Commands.startEnd(
+    //             () -> roller.setVoltage(Volts.of(5)),
+    //             () -> roller.setVoltage(Volts.of(0)));
+    // }
 
-    public Command shooterTest() {
-        return Commands.startEnd(
-                () -> shooter.enable(),
-                () -> shooter.disable());
-    }
+    // public Command pivotTest() {
+    //     return Commands.startEnd(
+    //             () -> pivot.setAngle(Positions.BACK),
+    //             () -> pivot.setAngle(Positions.INTAKE));
+    // }
 
-    public Command shooterSpeedUp() {
-        return Commands.runOnce(
-            () -> this.manualShooterAngularVelocity = manualShooterAngularVelocity.plus(RotationsPerSecond.of(0.1)));
+    // public Command shooterTest() {
+    //     return Commands.startEnd(
+    //             () -> shooter.enable(),
+    //             () -> shooter.disable());
+    // }
+
+    // public Command shooterSpeedUp() {
+    //     return Commands.runOnce(
+    //         () -> this.manualShooterAngularVelocity = manualShooterAngularVelocity.plus(RotationsPerSecond.of(0.1)));
         
-    }
+    // }
 
-    public Command shooterSlowDown() {
-        return Commands.runOnce(
-            () -> this.manualShooterAngularVelocity = this.manualShooterAngularVelocity.minus(RotationsPerSecond.of(0.1))
-        );
-    }
+    // public Command shooterSlowDown() {
+    //     return Commands.runOnce(
+    //         () -> this.manualShooterAngularVelocity = this.manualShooterAngularVelocity.minus(RotationsPerSecond.of(0.1))
+    //     );
+    // }
 
-    public Command HoodUp() {
-        return Commands.runOnce(
-            () -> manualHoodPosition += 0.01);
-    }
+    // public Command HoodUp() {
+    //     return Commands.runOnce(
+    //         () -> manualHoodPosition += 0.01);
+    // }
 
-    public Command HoodDown() {
-        return Commands.runOnce(
-            () -> manualHoodPosition -= 0.01);
-    }
+    // public Command HoodDown() {
+    //     return Commands.runOnce(
+    //         () -> manualHoodPosition -= 0.01);
+    // }
 
     @Override
     public void periodic() {

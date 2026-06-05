@@ -80,8 +80,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public final Limelight limelight_Center = new Limelight(drivetrain, "limelight-center");
-  // public final Limelight limelight_Left = new Limelight(drivetrain, "limelight-left");
-  // public final Limelight limelight_Right = new Limelight(drivetrain, "limelight-right");
+  public final Limelight limelight_Left = new Limelight(drivetrain, "limelight-left");
+  public final Limelight limelight_Right = new Limelight(drivetrain, "limelight-right");
 
   public final Dashboard dashboard = new Dashboard(new Signal());
 
@@ -173,22 +173,6 @@ public class RobotContainer {
     .onFalse(superstructure.stopOutTake());
   }
 
-  // public void sysidTest() {
-  //   driverJoystick.povUp().and(driverJoystick.a()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-  //   driverJoystick.povUp().and(driverJoystick.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-  //   driverJoystick.povUp().and(driverJoystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-  //   driverJoystick.povUp().and(driverJoystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-  //   driverJoystick.povDown().and(driverJoystick.a()).whileTrue(shooter.sysIdDynamic(Direction.kForward));
-  //   driverJoystick.povDown().and(driverJoystick.b()).whileTrue(shooter.sysIdDynamic(Direction.kReverse));
-  //   driverJoystick.povDown().and(driverJoystick.x()).whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
-  //   driverJoystick.povDown().and(driverJoystick.y()).whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
-
-  //   driverJoystick.povLeft().and(driverJoystick.a()).whileTrue(pivot.sysIdDynamic(Direction.kForward));
-  //   driverJoystick.povLeft().and(driverJoystick.b()).whileTrue(pivot.sysIdDynamic(Direction.kReverse));
-  //   driverJoystick.povLeft().and(driverJoystick.x()).whileTrue(pivot.sysIdQuasistatic(Direction.kForward));
-  //   driverJoystick.povLeft().and(driverJoystick.y()).whileTrue(pivot.sysIdQuasistatic(Direction.kReverse));
-  // }
 
   public void mechanismTest() {
     // driverJoystick.a().whileTrue(superstructure.intake());
@@ -197,8 +181,8 @@ public class RobotContainer {
     // driverJoystick.y().whileTrue(superstructure.pivotTest());
     // driverJoystick.rightTrigger().whileTrue(superstructure.shooterTest());
 
-    driverJoystick.povUp().onTrue(superstructure.shooterSpeedUp());
-    driverJoystick.povDown().onTrue(superstructure.shooterSlowDown());
+    // driverJoystick.povUp().onTrue(superstructure.shooterSpeedUp());
+    // driverJoystick.povDown().onTrue(superstructure.shooterSlowDown());
   }
 
   public Command aim(DoubleSupplier output) {
